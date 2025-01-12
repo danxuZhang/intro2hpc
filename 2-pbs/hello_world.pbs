@@ -1,0 +1,21 @@
+#!/usr/bin/bash
+
+#PBS -N hello_world
+#PBS -l select=2:ncpus=128:mem=4gb
+#PBS -l walltime=00:5:00
+#PBS -P personal
+#PBS -q normal
+#PBS -j oe
+#PBS -o hello_world.log
+
+echo "Running on host: $(hostname)"
+echo "Time is: $(date)"
+echo "Hello from PBS job!"
+
+echo "Job ID: $PBS_JOBID"
+echo "Job Name: $PBS_JOBNAME"
+echo "Working Directory: $PBS_O_WORKDIR"
+echo "Queue: $PBS_QUEUE"
+
+mpiexec -np 128 --hostfile $PBS_NODEFILE bash -c 'echo "Process $PMI_LOCAL_RANK on $(hostname)"'
+
