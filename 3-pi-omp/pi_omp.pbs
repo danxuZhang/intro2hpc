@@ -1,0 +1,39 @@
+#!/usr/bin/bash
+#PBS -N pi_omp
+#PBS -l select=1:ncpus=64:mem=128gb
+#PBS -l walltime=00:10:00
+#PBS -P personal
+#PBS -q normal
+#PBS -j oe
+#PBS -o pi_omp.log
+
+cd $PBS_O_WORKDIR
+echo "Working dir: "
+pwd
+echo ""
+
+module purge
+module load PrgEnv-gnu craype-x86-milan
+module list
+
+echo "Compiler:"
+cc --version
+echo ""
+
+echo "Compiling..."
+cc -fopenmp pi_omp.c -O2 -g -Wall -o pi_omp 
+echo ""
+
+echo "Running..."
+export OMP_NUM_THREADS=1
+echo "omp_num_threads: $OMP_NUM_THREADS"
+./pi_omp
+
+export OMP_NUM_THREADS=4
+echo "omp_num_threads: $OMP_NUM_THREADS"
+./pi_omp
+
+export OMP_NUM_THREADS=16
+echo "omp_num_threads: $OMP_NUM_THREADS"
+./pi_omp
+
