@@ -1,0 +1,27 @@
+#!/usr/bin/bash
+
+#PBS -N pi_mpi
+#PBS -l select=2:ncpus=128:mem=256gb
+#PBS -l walltime=00:10:00
+#PBS -P personal
+#PBS -q normal
+#PBS -j oe
+#PBS -o pi_mpi.log
+
+cd $PBS_O_WORKDIR
+
+module purge
+module load craype-x86-milan PrgEnv-gnu
+
+cc pi_mpi.c -Wall -O2 -g -o pi_mpi
+
+
+echo "Running on 16 procs"
+time mpiexec --hostfile $PBS_NODEFILE -np 16 ./pi_mpi
+echo "Running on 64 procs"
+time mpiexec --hostfile $PBS_NODEFILE -np 64 ./pi_mpi
+echo "Running on 128 procs"
+time mpiexec --hostfile $PBS_NODEFILE -np 128 ./pi_mpi
+echo "Running on 256 procs"
+time mpiexec --hostfile $PBS_NODEFILE -np 256 ./pi_mpi
+
